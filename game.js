@@ -1,6 +1,6 @@
 terrain = [];
 
-cubeSize = 10;
+cubeSize = 30;
 
 size = Math.floor(window.innerHeight / cubeSize);
 
@@ -68,6 +68,10 @@ function adapt(x, y, unAcceptable) {
   }
 }
 
+passedTime = 0;
+pointerX = 1;
+pointerY = 2;
+
 function draw() {
   for (x = 0; x < terrain.length; x++) {
     for (y = 0; y < terrain[x].length; y++) {
@@ -97,8 +101,9 @@ function draw() {
 }
 
 function update() {
+  if(pointerY < size - 2){
   for (speed = 0; speed < 3; speed++) {
-    for (times = 0; times < 4; times++) {
+    for (times = 0; times < 6; times++) {
       for (x = 1; x < terrain.length - 1; x++) {
         for (y = 1; y < terrain[x].length - 1; y++) {
           if (
@@ -146,15 +151,35 @@ function update() {
         }
       }
     }
-    do {
-      randX = Math.floor(Math.random() * size);
-      randY = Math.floor(Math.random() * size);
-    } while (terrain[randX][randY].length < 1);
-    while (terrain[randX][randY].length > 1) {
-      terrain[randX][randY].splice(
-        Math.floor(Math.random() * terrain[randX][randY].length),
-        1
-      );
+    passedTime++;
+
+    if (passedTime < 100) {
+      do {
+        randX = Math.floor(Math.random() * size);
+        randY = Math.floor(Math.random() * size);
+      } while (terrain[randX][randY].length <= 1);
+      while (terrain[randX][randY].length > 1) {
+        terrain[randX][randY].splice(
+          Math.floor(Math.random() * terrain[randX][randY].length),
+          1
+        );
+      }
+    } else {
+      do {
+        if (pointerX > size - 2) {
+          pointerX = 2;
+          pointerY++;
+        } else {
+          pointerX++;
+        }
+      } while (terrain[pointerX][pointerY].length <= 1);
+      while (terrain[pointerX][pointerY].length > 1) {
+        terrain[pointerX][pointerY].splice(
+          Math.floor(Math.random() * terrain[pointerX][pointerY].length),
+          1
+        );
+      }
     }
   }
+}
 }
