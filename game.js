@@ -1,6 +1,8 @@
 terrain = [];
 
-cubeSize = 30;
+voroniSize = 1
+
+cubeSize = 10;
 
 size = Math.floor(window.innerHeight / cubeSize);
 
@@ -72,38 +74,89 @@ passedTime = 0;
 pointerX = 1;
 pointerY = 2;
 
+once = true;
+
+randX = 0
+
+randY = 0
+
+//voronization
+
+voroni = [];
+
 function draw() {
-  for (x = 0; x < terrain.length; x++) {
-    for (y = 0; y < terrain[x].length; y++) {
-      if (terrain[x][y].length == 1) {
-        if (terrain[x][y][0] >= 0 && terrain[x][y][0] <= detail - 1) {
+  if (once) {
+    for (x = 0; x < terrain.length; x++) {
+      for (y = 0; y < terrain[x].length; y++) {
+        if (terrain[x][y].length == 1) {
+          if (terrain[x][y][0] >= 0 && terrain[x][y][0] <= detail - 1) {
+            context.fillStyle = "blue";
+          }
+          if (
+            terrain[x][y][0] >= detail &&
+            terrain[x][y][0] <= detail * 2 - 1
+          ) {
+            context.fillStyle = "yellow";
+          }
+          if (
+            terrain[x][y][0] >= detail * 2 &&
+            terrain[x][y][0] <= detail * 3 - 1
+          ) {
+            context.fillStyle = "green";
+          }
+          if (
+            terrain[x][y][0] >= detail * 3 &&
+            terrain[x][y][0] <= detail * 4 - 1
+          ) {
+            context.fillStyle = "#2b2b2b";
+          }
+          context.fillRect(x * cubeSize, y * cubeSize, cubeSize, cubeSize);
+        }
+      }
+    }
+  } else {
+    for(x = 0 ; x < window.innerHeight; x+=voroniSize){
+      for(y = 0 ; y < window.innerHeight; y+=voroniSize){
+        dist = 1000
+        for(i = 0; i < voroni.length; i++){
+          curDist = Math.sqrt(Math.pow(x-voroni[i].x,2)+Math.pow(y-voroni[i].y,2))
+          if(dist > curDist){
+            dist = curDist
+            choseni = i
+          }
+        }
+        
+        if (voroni[choseni].color >= 0 && voroni[choseni].color <= detail - 1) {
           context.fillStyle = "blue";
         }
-        if (terrain[x][y][0] >= detail && terrain[x][y][0] <= detail * 2 - 1) {
+        if (
+          voroni[choseni].color >= detail &&
+          voroni[choseni].color <= detail * 2 - 1
+        ) {
           context.fillStyle = "yellow";
         }
         if (
-          terrain[x][y][0] >= detail * 2 &&
-          terrain[x][y][0] <= detail * 3 - 1
+          voroni[choseni].color >= detail * 2 &&
+          voroni[choseni].color <= detail * 3 - 1
         ) {
           context.fillStyle = "green";
         }
         if (
-          terrain[x][y][0] >= detail * 3 &&
-          terrain[x][y][0] <= detail * 4 - 1
+          voroni[choseni].color >= detail * 3 &&
+          voroni[choseni].color <= detail * 4 - 1
         ) {
           context.fillStyle = "#2b2b2b";
         }
-        context.fillRect(x * cubeSize, y * cubeSize, cubeSize, cubeSize);
+
+        context.fillRect(x,y,voroniSize,voroniSize)
       }
     }
   }
 }
 
 function update() {
-  if(pointerY < size - 2){
-  for (speed = 0; speed < 3; speed++) {
-    for (times = 0; times < 6; times++) {
+  if (pointerY < size - 3) {
+    for (speed = 0; speed < 1; speed++) {
       for (x = 1; x < terrain.length - 1; x++) {
         for (y = 1; y < terrain[x].length - 1; y++) {
           if (
@@ -153,10 +206,18 @@ function update() {
     }
     passedTime++;
 
-    if (passedTime < 100) {
+    if (passedTime < 1000) {
+      prevX = randY
+      prevY = randY
       do {
-        randX = Math.floor(Math.random() * size);
-        randY = Math.floor(Math.random() * size);
+        do{
+          randX = Math.floor(Math.random() * size);
+        }while(randX > prevX - 12 && randX < prevX + 12)
+        
+        do{
+          randY = Math.floor(Math.random() * size);
+        }while(randY > prevY - 12 && randY < prevY + 12)
+        
       } while (terrain[randX][randY].length <= 1);
       while (terrain[randX][randY].length > 1) {
         terrain[randX][randY].splice(
@@ -180,6 +241,18 @@ function update() {
         );
       }
     }
+  } else {
+    if (once) {
+      once = false;
+      for (x = 0; x < terrain.length; x++) {
+        for (y = 0; y < terrain[x].length; y++) {
+          voroni.push({
+            x: Math.random() * cubeSize + x * cubeSize,
+            y: Math.random() * cubeSize + y * cubeSize,
+            color: terrain[x][y][0]
+          });
+        }
+      }
+    }
   }
-}
 }
