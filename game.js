@@ -1,6 +1,6 @@
 terrain = [];
 
-voroniSize = 1
+voroniSize = 1;
 
 cubeSize = 10;
 
@@ -76,9 +76,9 @@ pointerY = 2;
 
 once = true;
 
-randX = 0
+randX = 0;
 
-randY = 0
+randY = 0;
 
 //voronization
 
@@ -88,67 +88,103 @@ function draw() {
   if (once) {
     for (x = 0; x < terrain.length; x++) {
       for (y = 0; y < terrain[x].length; y++) {
-        if (terrain[x][y].length == 1) {
-          if (terrain[x][y][0] >= 0 && terrain[x][y][0] <= detail - 1) {
-            context.fillStyle = "blue";
-          }
-          if (
-            terrain[x][y][0] >= detail &&
-            terrain[x][y][0] <= detail * 2 - 1
-          ) {
-            context.fillStyle = "yellow";
-          }
-          if (
-            terrain[x][y][0] >= detail * 2 &&
-            terrain[x][y][0] <= detail * 3 - 1
-          ) {
-            context.fillStyle = "green";
-          }
-          if (
-            terrain[x][y][0] >= detail * 3 &&
-            terrain[x][y][0] <= detail * 4 - 1
-          ) {
-            context.fillStyle = "#2b2b2b";
-          }
-          context.fillRect(x * cubeSize, y * cubeSize, cubeSize, cubeSize);
+        // if (terrain[x][y].length == 1) {
+        if (terrain[x][y][0] >= 0 && terrain[x][y][0] <= detail - 1) {
+          context.fillStyle = `rgb(${terrain[x][y][0] * 50},${
+            terrain[x][y][0] * 50
+          },${255})`;
         }
+        if (terrain[x][y][0] >= detail && terrain[x][y][0] <= detail * 2 - 2) {
+          context.fillStyle = `rgb(${255 - (terrain[x][y][0] - detail) * 30},${
+            255 - (terrain[x][y][0] - detail) * 30
+          },${30})`;
+        }
+        if (
+          terrain[x][y][0] >= detail * 2 - 1 &&
+          terrain[x][y][0] <= detail * 3 - 1
+        ) {
+          context.fillStyle = `rgb(${50},${
+            200 - (terrain[x][y][0] - detail * 2) * 30
+          },${50})`;
+        }
+        if (
+          terrain[x][y][0] >= detail * 3 &&
+          terrain[x][y][0] <= detail * 4 - 1
+        ) {
+          context.fillStyle = `rgb(${
+            100 + (terrain[x][y][0] - detail * 3) * 40
+          },${100 + (terrain[x][y][0] - detail * 3) * 40},${
+            100 + (terrain[x][y][0] - detail * 3) * 40
+          })`;
+        }
+        context.fillRect(x * cubeSize, y * cubeSize, cubeSize, cubeSize);
       }
+      // }
     }
   } else {
-    for(x = 0 ; x < window.innerHeight; x+=voroniSize){
-      for(y = 0 ; y < window.innerHeight; y+=voroniSize){
-        dist = 1000
-        for(i = 0; i < voroni.length; i++){
-          curDist = Math.sqrt(Math.pow(x-voroni[i].x,2)+Math.pow(y-voroni[i].y,2))
-          if(dist > curDist){
-            dist = curDist
-            choseni = i
+    for (x = 0; x < window.innerHeight; x += voroniSize) {
+      for (y = 0; y < window.innerHeight; y += voroniSize) {
+        dist = 1000;
+        for (
+          i = Math.floor(x / cubeSize) - 2;
+          i < Math.floor(x / cubeSize) + 2;
+          i++
+        ) {
+          for (
+            j = Math.floor(y / cubeSize) - 2;
+            j < Math.floor(y / cubeSize) + 2;
+            j++
+          ) {
+            if (i >= 0 && j >= 0 && i < size - 1 && j < size - 1) {
+              curDist = Math.sqrt(
+                Math.pow(x - voroni[i][j].x, 2) +
+                  Math.pow(y - voroni[i][j].y, 2)
+              );
+              if (dist > curDist) {
+                dist = curDist;
+                choseni = i;
+                chosenj = j;
+              }
+            }
           }
         }
-        
-        if (voroni[choseni].color >= 0 && voroni[choseni].color <= detail - 1) {
-          context.fillStyle = "blue";
+
+        if (
+          voroni[choseni][chosenj].color >= 0 &&
+          voroni[choseni][chosenj].color <= detail - 1
+        ) {
+          context.fillStyle = `rgb(${voroni[choseni][chosenj].color * 50},${
+            voroni[choseni][chosenj].color * 50
+          },${255})`;
         }
         if (
-          voroni[choseni].color >= detail &&
-          voroni[choseni].color <= detail * 2 - 1
+          voroni[choseni][chosenj].color >= detail &&
+          voroni[choseni][chosenj].color <= detail * 2 - 2
         ) {
-          context.fillStyle = "yellow";
+          context.fillStyle = `rgb(${
+            255 - (voroni[choseni][chosenj].color - detail) * 30
+          },${255 - (voroni[choseni][chosenj].color - detail) * 30},${30})`;
         }
         if (
-          voroni[choseni].color >= detail * 2 &&
-          voroni[choseni].color <= detail * 3 - 1
+          voroni[choseni][chosenj].color >= detail * 2 - 1 &&
+          voroni[choseni][chosenj].color <= detail * 3 - 1
         ) {
-          context.fillStyle = "green";
+          context.fillStyle = `rgb(${50},${
+            200 - (voroni[choseni][chosenj].color - detail * 2) * 30
+          },${50})`;
         }
         if (
-          voroni[choseni].color >= detail * 3 &&
-          voroni[choseni].color <= detail * 4 - 1
+          voroni[choseni][chosenj].color >= detail * 3 &&
+          voroni[choseni][chosenj].color <= detail * 4 - 1
         ) {
-          context.fillStyle = "#2b2b2b";
+          context.fillStyle = `rgb(${
+            100 + (voroni[choseni][chosenj].color - detail * 3) * 40
+          },${100 + (voroni[choseni][chosenj].color - detail * 3) * 40},${
+            100 + (voroni[choseni][chosenj].color - detail * 3) * 40
+          })`;
         }
 
-        context.fillRect(x,y,voroniSize,voroniSize)
+        context.fillRect(x, y, voroniSize, voroniSize);
       }
     }
   }
@@ -207,17 +243,16 @@ function update() {
     passedTime++;
 
     if (passedTime < 1000) {
-      prevX = randY
-      prevY = randY
+      prevX = randY;
+      prevY = randY;
       do {
-        do{
+        do {
           randX = Math.floor(Math.random() * size);
-        }while(randX > prevX - 12 && randX < prevX + 12)
-        
-        do{
+        } while (randX > prevX - 12 && randX < prevX + 12);
+
+        do {
           randY = Math.floor(Math.random() * size);
-        }while(randY > prevY - 12 && randY < prevY + 12)
-        
+        } while (randY > prevY - 12 && randY < prevY + 12);
       } while (terrain[randX][randY].length <= 1);
       while (terrain[randX][randY].length > 1) {
         terrain[randX][randY].splice(
@@ -245,11 +280,12 @@ function update() {
     if (once) {
       once = false;
       for (x = 0; x < terrain.length; x++) {
+        voroni.push([]);
         for (y = 0; y < terrain[x].length; y++) {
-          voroni.push({
+          voroni[x].push({
             x: Math.random() * cubeSize + x * cubeSize,
             y: Math.random() * cubeSize + y * cubeSize,
-            color: terrain[x][y][0]
+            color: terrain[x][y][0],
           });
         }
       }
