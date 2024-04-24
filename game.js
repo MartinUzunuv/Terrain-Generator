@@ -3,6 +3,7 @@ terrain = [];
 voroniSize = 1;
 
 
+
 cubeSize = 10;
 
 size = Math.floor(window.innerHeight / cubeSize);
